@@ -1,5 +1,4 @@
 clearvars
-cd /home/robocup/RoPod/Force_dist_ZMPC_ROS
 addpath(genpath('../Global_Libraries'))
 
 
