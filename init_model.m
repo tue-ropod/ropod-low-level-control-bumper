@@ -150,7 +150,7 @@ if (ZMPCx_Fd_min >= ZMPCx_Fd_max)
    disp('Error: ZMPC parameters incorrect')
 end
 
-if (ZMPCx_Fd_max > 0)
+if (ZMPCx_Fd_max < 0)
    disp('Error: ZMPC parameters incorrect')
 end
 
@@ -158,6 +158,6 @@ if (ZMPCy_Fd_min >= ZMPCx_Fd_max)
    disp('Error: ZMPC parameters incorrect')
 end
 
-if (ZMPCy_Fd_max > 0)
+if (ZMPCy_Fd_max < 0)
    disp('Error: ZMPC parameters incorrect')
 end
