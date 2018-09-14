@@ -4,7 +4,6 @@ addpath(genpath('../Global_Libraries'))
 
 
 %% ROS configuration
-
 setenv('ROS_IP','localhost')
 setenv('ROS_HOSTNAME','')
 
@@ -18,8 +17,6 @@ SW_COM1_MODE_DVELOCITY	=  bitshift(hex2dec('0003'),2); % (0x3 << 2)
 SW_COM1_EMERGENCY1		=  hex2dec('0010');             %  0x0010	
 SW_COM1_EMERGENCY2		=  hex2dec('0020');             %  0x0020
 SW_COM1_USE_TS			=  hex2dec('8000');             %  0x8000
-
-
 
 %% smart wheels limits and offset
 %run ../Global_Libraries/ropod_parameters/motor_parameters
@@ -43,10 +40,10 @@ max_ropod_acc_theta  =  1.6; % [rad/s^2]
 max_ropod_sw_force   =  500; % [N]
 max_ropod_sw_tau     =  250; % [Nm]
 
-
 %% Initialze kinemtic-dynamic model and control parameters
 Nwheels = 4; % Do not change this parameter. The simulink model would need to change as well
 set_ropod_KinModparams;
+
 %% Sample times and initialization
 Ts = 0.001; % Controller 
 Tsp = 1;
@@ -89,9 +86,8 @@ LPF_fhz_dvarphi_cntr = 100;
 %% SysID signal
 load q_Traj
 
-
 Tslot = (size(V_glb,1)-1)*Ts;
-Tinit = 1*Tslot; %The duration of the initialization is same as that of one period of the ID signal, to avoid switchiong to an abrupt reference.
+Tinit = Tslot; %The duration of the initialization is same as that of one period of the ID signal, to avoid switchiong to an abrupt reference.
 
 qrefdot_sys_ID_num_sing = 0*[V_glb(:,1) 0*V_glb(:,2) 0*W_glb_rz ];
 qrefdot_num = repmat(qrefdot_sys_ID_num_sing,[2 1]);
@@ -99,6 +95,7 @@ timesim = (0:1:size(qrefdot_num,1)-1).'*Ts;
 qrefdot = [timesim qrefdot_num];
 %Tfinal = timesim(end);
 Tfinal = 3600*10;
+
 %% trajectory checks
 
 max_ropod_traj_vel_x = max(qrefdot_sys_ID_num_sing(:,1));
@@ -123,41 +120,55 @@ if (max_ropod_traj_acc_theta>max_ropod_acc_theta)
     disp('Error: Trajectory theta acceleration exceeds limits')
 end
 
-
 %% Parameters Pieter
-%sRead = struct('sig1',0,'sig2',10);
-%load('ex_lct_busObjs.mat');
 load('RoPod_parameters.mat');
 load('ZMPCx_parameters.mat');
 load('ZMPCy_parameters.mat');
 Ts_MPC = 0.001;
 
+% High pass filter Fy signal
 fq = 0.0001;
 zelta = 1000;
 hpfC_Bumper=tf([1 0 0],[1 (2*zelta*fq) fq^2]);
 hpfD_Bumper = c2d(hpfC_Bumper,Ts,'zoh');
 
-
 %% ZMPC parameters
-ZMPCx_Fd_min = 20; % minimal interaction force with mobidik
-ZMPCx_Fd_max = 70; % maximal interaction force witch collision / mobidick
-ZMPCy_Fd_min = 20; % not used
-ZMPCy_Fd_max = 70; % maximal interaction force for sideways forces
+
+% Mode 0: velocoty control
+
+% Mode 1: Operation_mode
+% state 2: Collision with object
+ZMPCx_Fd_min_sp = 20;  % minimal force to enable ZMPC Fx
+ZMPCx_Fd_max_sp = 130; % maximal interaction force witch collision Fx
+ZMPCx_Fr_min_sp = -40; % minimal motor power Fx
+ZMPCx_Fr_max_sp = 40;  % maximal motor power Fx
+% state 3: Force from the side
+ZMPCy_Fd_min_sp = 20;   % minimal force to enable ZMPC Fy (+/- 2N bound)
+ZMPCy_Fd_max_sp = 70;   % maximal interaction force for sideways forces Fy
+ZMPCy_Fr_min_sp = -120; % minimal motor power Fy
+ZMPCy_Fr_max_sp = 120;  % maximal motor power Fy
+
+% Mode 4: Connect to cart
+ZMPCx_Fd_min_cart_sp = 20;   % minimal interaction force with cart Fx
+ZMPCx_Fd_max_cart_sp = 130;  % maximal interaction force witch cart Fx
+ZMPCx_Fr_min_cart_sp = -120; % minimal motor power Fx
+ZMPCx_Fr_max_cart_sp = 120;  % maximal motor power Fx
+
 
 %% ZMPC parameter checks
 
-if (ZMPCx_Fd_min >= ZMPCx_Fd_max)
+if (ZMPCx_Fd_min_sp >= ZMPCx_Fd_max_sp || ZMPCy_Fd_min_sp >= ZMPCy_Fd_max_sp || ZMPCx_Fd_min_cart_sp >= ZMPCx_Fd_max_cart_sp)
    disp('Error: ZMPC parameters incorrect')
 end
 
-if (ZMPCx_Fd_max < 0)
+if (ZMPCx_Fd_max_sp < 0 || ZMPCy_Fd_max_sp < 0 || ZMPCx_Fd_max_cart_sp < 0)
    disp('Error: ZMPC parameters incorrect')
 end
 
-if (ZMPCy_Fd_min >= ZMPCx_Fd_max)
+if (ZMPCx_Fr_min_sp > 0 || ZMPCy_Fr_min_sp > 0 || ZMPCx_Fr_min_cart_sp > 0)
    disp('Error: ZMPC parameters incorrect')
 end
 
-if (ZMPCy_Fd_max < 0)
+if (ZMPCx_Fr_max_sp < 0 || ZMPCy_Fr_max_sp < 0 || ZMPCx_Fr_max_cart_sp < 0)
    disp('Error: ZMPC parameters incorrect')
 end
