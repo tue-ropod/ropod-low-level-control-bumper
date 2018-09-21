@@ -27,16 +27,16 @@ max_sw_current  =  10; % [A]
 sw_tau_2_curr = 1/motor_physical_parameters.torqueconstant.value;
 max_sw_tau      = max_sw_current/sw_tau_2_curr;
 max_hw_tau      = 7.0;
-pivot_offs_sws  = [2.21 1.873 2.001 3.508]; % Vector with pivot offsets
+pivot_offs_sws  = [2.252 1.8598 1.9866 4.7711]; % Vector with pivot offsets
 Taucompfactor = 2.0; % Compensation factor for wheels 3-4
 
 %% Ropod max limits
 
 % This limits should be compatible with ID signal
-max_ropod_vel_xy     =  1.0; % [m/s]
-max_ropod_acc_xy     =  1.0; % [m/s^2]
+max_ropod_vel_xy     =  2.0; % [m/s]
+max_ropod_acc_xy     =  4.0; % [m/s^2]
 max_ropod_vel_theta  =  1.6; % [rad/s]
-max_ropod_acc_theta  =  1.6; % [rad/s^2]
+max_ropod_acc_theta  =  4.0; % [rad/s^2]
 max_ropod_sw_force   =  500; % [N]
 max_ropod_sw_tau     =  250; % [Nm]
 
@@ -138,12 +138,12 @@ hpfD_Bumper = c2d(hpfC_Bumper,Ts,'zoh');
 
 % Mode 1: Operation_mode
 % state 2: Collision with object
-ZMPCx_Fd_min_sp = 20;  % minimal force to enable ZMPC Fx
-ZMPCx_Fd_max_sp = 130; % maximal interaction force witch collision Fx
-ZMPCx_Fr_min_sp = -40; % minimal motor power Fx
-ZMPCx_Fr_max_sp = 40;  % maximal motor power Fx
+ZMPCx_Fd_min_sp = 60;  % minimal force to enable ZMPC Fx
+ZMPCx_Fd_max_sp = 100; % maximal interaction force witch collision Fx
+ZMPCx_Fr_min_sp = -60; % minimal motor power Fx
+ZMPCx_Fr_max_sp = 60;  % maximal motor power Fx
 % state 3: Force from the side
-ZMPCy_Fd_min_sp = 20;   % minimal force to enable ZMPC Fy (+/- 2N bound)
+ZMPCy_Fd_min_sp = 30;   % minimal force to enable ZMPC Fy (+/- 2N bound)
 ZMPCy_Fd_max_sp = 70;   % maximal interaction force for sideways forces Fy
 ZMPCy_Fr_min_sp = -120; % minimal motor power Fy
 ZMPCy_Fr_max_sp = 120;  % maximal motor power Fy
