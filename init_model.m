@@ -27,7 +27,7 @@ max_sw_current  =  10; % [A]
 sw_tau_2_curr = 1/motor_physical_parameters.torqueconstant.value;
 max_sw_tau      = max_sw_current/sw_tau_2_curr;
 max_hw_tau      = 7.0;
-pivot_offs_sws  = [2.252 1.8598 1.9866 4.7711]; % Vector with pivot offsets
+pivot_offs_sws  = [3.835 3.465 2.059 0.357]; % Vector with pivot offsets
 Taucompfactor = 2.0; % Compensation factor for wheels 3-4
 
 %% Ropod max limits
