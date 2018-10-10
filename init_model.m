@@ -74,8 +74,6 @@ FFtheta_intia = 0;
 
 %% Wheel Vel controller
 % No integrators at the wheel velocity level!;
-% load wheel_vel_cntr_GLL.mat
-% dvarphi_wheel_cntr = shapeit_data.C_tf_z;
 
 K_gain_dvarphi_cntr = 0.05;
 I_fhz_dvarphi_cntr = 0;
