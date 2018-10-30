@@ -5,6 +5,11 @@ The compliant low-level-control atchitecture of the ropod has three main loops: 
 
 The wheel velocity loop is purposely designed with a low gain and no integral action to reduce pertubation among the different wheel controllers. Since these are now low gain controllers, if used alone, they will not be able to track properly the reference velocities. For the platform velocity loop loop, there are three controlers, x and y local platform velocities and rotation velocity. The torque distribution block takes care that wheel torque saturation is avoided whenever possible. Constrained quadratic programing is used to compute the optimal torque distribution. When the total required wrench cannot be achieving without wheel torque saturation, the wrench is scale down accordingly. The Z-MPC block is active only when a minimun interaction threshold is exceeded.
 
+The Z-MPC is configured to work on 4 different modes that are configurable:
+
+* *Mode 0: Z-MPC fully deactivated*
+In this mode the robot will not react to external forces measured at the bumper
+
 ## 2. ROS node API
 ### 2.1 Topics
 #### 2.1.1 Published topics
