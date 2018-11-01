@@ -7,8 +7,11 @@ The wheel velocity loop is purposely designed with a low gain and no integral ac
 
 The Z-MPC is configured to work on 4 different modes that are configurable:
 
-* *Mode 0: Z-MPC fully deactivated*
-In this mode the robot will not react to external forces measured at the bumper
+* *Mode 0: Z-MPC fully deactivated*:
+Velocity control is active by default. The robot will not react to external forces measured at the bumper
+* *Mode 1: Z-MPC active in x-y*:
+Velocity control is active by default. The robot will react to external forces measured at the bumper. When forces in the x-axis are detected, the robot will swicth to compliant control mode and stay permanently there. When forces in the y-axis are detected, the robot will switch to cmpliant control only when the interaction forces are above a minimal theshold. When the interaction force in y is removed, the controller switches back to velocity control.
+
 
 ## 2. ROS node API
 ### 2.1 Topics
